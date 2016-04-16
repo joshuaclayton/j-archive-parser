@@ -41,7 +41,7 @@ extractClue = proc xml -> do
     answer <- maybeAnswer -< xml
     question <- maybeQuestion -< xml
     value <- maybeValue -< xml
-    returnA -< question >>= \q -> answer >>= \a -> value >>= \v -> return $ buildClue q a v
+    returnA -< buildClue <$> question <*> answer <*> value
   where
     clueText = css ".clue_text" >>> allText
     valueText = css ".clue_value" >>> allText
