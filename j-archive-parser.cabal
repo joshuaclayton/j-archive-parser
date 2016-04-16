@@ -19,6 +19,7 @@ library
                      , JArchiveParser.Request
                      , JArchiveParser.GameParser
                      , JArchiveParser.Models
+                     , JArchiveParser.Regex
   build-depends:       base >= 4.7 && < 5
                      , hxt-css
                      , hxt
