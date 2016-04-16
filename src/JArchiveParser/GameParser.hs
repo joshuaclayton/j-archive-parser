@@ -53,8 +53,8 @@ retrieveAttribute a =
 
 allText :: ArrowXml a => a (NTree XNode) String
 allText =
-    allTextNodes >>^ extractTextFromNodes
+    allTextNodes >>^ extractTextFromNodes >>> arr concat
   where
     allTextNodes = listA $ deep isText
-    extractTextFromNodes = concat . fmap f'
+    extractTextFromNodes = fmap f'
     f' (NTree (XText v) _) = v
