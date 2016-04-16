@@ -1,10 +1,15 @@
 module JArchiveParser.Models
     ( Clue, Game, Round, buildClue, buildGame, buildRound
+    , Category, buildCategory
     ) where
 
 data Clue = Clue
     { question :: String
     , answer :: String
+    } deriving Show
+
+data Category = Category
+    { name :: String
     } deriving Show
 
 data Game = Game
@@ -13,7 +18,8 @@ data Game = Game
     } deriving Show
 
 data Round = Round
-    { clues :: [Clue]
+    { categories :: [Category]
+    , clues :: [Clue]
     } deriving Show
 
 buildClue :: String -> String -> Clue
@@ -22,5 +28,8 @@ buildClue = Clue
 buildGame :: Int -> String -> Game
 buildGame = Game
 
-buildRound :: [Clue] -> Round
+buildRound :: [Category] -> [Clue] -> Round
 buildRound = Round
+
+buildCategory :: String -> Category
+buildCategory = Category

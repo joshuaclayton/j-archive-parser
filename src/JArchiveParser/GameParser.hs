@@ -24,7 +24,13 @@ extractClues url = do
 extractRound :: ArrowXml a => a XmlTree Round
 extractRound = proc xml -> do
   clues <- listA $ css ".clue" >>> extractClue -< xml
-  returnA -< buildRound clues
+  categories <- listA extractCategory -< xml
+  returnA -< buildRound categories clues
+
+extractCategory :: ArrowXml a => a XmlTree Category
+extractCategory = proc xml -> do
+  name <- css ".category_name" >>> allText -< xml
+  returnA -< buildCategory name
 
 extractClue :: ArrowXml a => a XmlTree Clue
 extractClue = proc xml -> do
@@ -33,13 +39,17 @@ extractClue = proc xml -> do
     returnA -< buildClue question answer
   where
     clueText = css ".clue_text" >>> allText
-    questionText = css "div" >>> hasAttr "onmouseover" >>> getAttrValue "onmouseover" >>^ answerFromMouseOver
+    questionText = css "div" >>> retrieveAttribute "onmouseover" >>^ answerFromMouseOver
 
 answerFromMouseOver :: String -> String
 answerFromMouseOver mouseover =
     last $ head $ matchAllSubgroups textInsideEm mouseover
   where
     textInsideEm = mkRegex "<em .*>(.*)</em>"
+
+retrieveAttribute :: ArrowXml a => String -> a XmlTree String
+retrieveAttribute a =
+  hasAttr a >>> getAttrValue a
 
 allText :: ArrowXml a => a (NTree XNode) String
 allText =
