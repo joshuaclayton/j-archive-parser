@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import JArchiveParser.GameParser
 
 main :: IO ()
 main = someFunc
