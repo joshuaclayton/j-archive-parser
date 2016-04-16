@@ -19,7 +19,7 @@ data Game = Game
 
 data Round = Round
     { categories :: [Category]
-    , clues :: [Clue]
+    , clues :: [Maybe Clue]
     } deriving Show
 
 buildClue :: String -> String -> Clue
@@ -28,7 +28,7 @@ buildClue = Clue
 buildGame :: Int -> String -> Game
 buildGame = Game
 
-buildRound :: [Category] -> [Clue] -> Round
+buildRound :: [Category] -> [Maybe Clue] -> Round
 buildRound = Round
 
 buildCategory :: String -> Category

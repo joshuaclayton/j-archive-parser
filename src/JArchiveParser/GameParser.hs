@@ -26,7 +26,7 @@ extractRound :: ArrowXml a => a XmlTree Round
 extractRound = proc xml -> do
     clues <- listA tr -< xml
     categories <- listA extractCategory -< xml
-    returnA -< buildRound categories (catMaybes $ concat clues)
+    returnA -< buildRound categories (concat clues)
   where
     tr = css "tr" >>> extractClue'
     extractClue' = listA $ css ".clue" >>> extractClue
@@ -38,12 +38,13 @@ extractCategory = proc xml -> do
 
 extractClue :: ArrowXml a => a XmlTree (Maybe Clue)
 extractClue = proc xml -> do
-    answer <- clueText -< xml
+    answer <- maybeAnswer -< xml
     question <- maybeQuestion -< xml
-    returnA -< question >>= \q -> return $ buildClue q answer
+    returnA -< question >>= \q -> answer >>= \a -> return $ buildClue q a
   where
     clueText = css ".clue_text" >>> allText
     maybeQuestion = arrToMaybe ((/=) "") questionText
+    maybeAnswer = arrToMaybe ((/=) "") clueText
     questionText = css "div" >>> retrieveAttribute "onmouseover" >>^ answerFromMouseOver
 
 arrToMaybe :: ArrowXml a => (b -> Bool) -> a XmlTree b -> a XmlTree (Maybe b)
@@ -54,7 +55,7 @@ answerFromMouseOver :: String -> String
 answerFromMouseOver mouseover =
     last $ head $ matchAllSubgroups textInsideEm mouseover
   where
-    textInsideEm = mkRegex "<em .*>(.*)</em>"
+    textInsideEm = mkRegex "<em[^>]*>(.+)</em>"
 
 retrieveAttribute :: ArrowXml a => String -> a XmlTree String
 retrieveAttribute a =
