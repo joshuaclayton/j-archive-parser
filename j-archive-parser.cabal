@@ -24,7 +24,7 @@ library
                      , hxt-css
                      , hxt
                      , hxt-http
-                     , regex-posix
+                     , regex-tdfa
   default-language:    Haskell2010
   other-extensions:    Arrows
 

@@ -32,7 +32,7 @@ extractAnswer = proc xml -> do
 
 answerFromMouseOver :: String -> String
 answerFromMouseOver mouseover =
-    last $ head $ mouseover `matchAllSubgroups` textInsideEm
+    last $ head $ matchAllSubgroups textInsideEm mouseover
   where
     textInsideEm = mkRegex "<em .*>(.*)</em>"
 

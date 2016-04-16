@@ -1,13 +1,22 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module JArchiveParser.Regex
     ( matchAllSubgroups
     , mkRegex
     ) where
 
-import Text.Regex.Posix ((=~))
+import Text.Regex.TDFA
+import Data.List (unfoldr)
 
-mkRegex :: String -> String
-mkRegex s = s
+mkRegex :: RegexMaker Regex CompOption ExecOption String => String -> Regex
+mkRegex str =
+    makeRegex str
 
-matchAllSubgroups :: String -> String -> [[String]]
-matchAllSubgroups t r =
-  t =~ r :: [[String]]
+matchAllSubgroups :: Regex -> String -> [[String]]
+matchAllSubgroups re =
+    unfoldr f
+  where
+    f :: String -> Maybe ([String], String)
+    f str = do
+        (_, _, rest, groups) <- matchM re str :: Maybe (String, String, String, [String])
+        return (groups, rest)
