@@ -6,6 +6,7 @@ module JArchiveParser.Models
 data Clue = Clue
     { question :: String
     , answer :: String
+    , value :: String
     } deriving Show
 
 data Category = Category
@@ -22,7 +23,7 @@ data Round = Round
     , clues :: [Maybe Clue]
     } deriving Show
 
-buildClue :: String -> String -> Clue
+buildClue :: String -> String -> String -> Clue
 buildClue = Clue
 
 buildGame :: Int -> String -> Game
