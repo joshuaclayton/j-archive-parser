@@ -1,5 +1,5 @@
 module JArchiveParser.Models
-    ( Clue, Game, buildClue, buildGame
+    ( Clue, Game, Round, buildClue, buildGame, buildRound
     ) where
 
 data Clue = Clue
@@ -12,8 +12,15 @@ data Game = Game
     , url :: String
     } deriving Show
 
+data Round = Round
+    { clues :: [Clue]
+    } deriving Show
+
 buildClue :: String -> String -> Clue
 buildClue = Clue
 
 buildGame :: Int -> String -> Game
 buildGame = Game
+
+buildRound :: [Clue] -> Round
+buildRound = Round

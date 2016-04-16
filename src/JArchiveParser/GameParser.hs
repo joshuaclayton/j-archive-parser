@@ -17,12 +17,17 @@ someFunc = do
   result <- extractClues $ gameUrl 173
   mapM_ (putStrLn . show) result
 
-extractClues :: String -> IO [Clue]
+extractClues :: String -> IO [Round]
 extractClues url = do
-  runX $ fromUrl url >>> css "#jeopardy_round .clue" >>> extractAnswer
+  runX $ fromUrl url >>> css "#jeopardy_round" >>> extractRound
 
-extractAnswer :: ArrowXml a => a XmlTree Clue
-extractAnswer = proc xml -> do
+extractRound :: ArrowXml a => a XmlTree Round
+extractRound = proc xml -> do
+  clues <- listA $ css ".clue" >>> extractClue -< xml
+  returnA -< buildRound clues
+
+extractClue :: ArrowXml a => a XmlTree Clue
+extractClue = proc xml -> do
     answer <- clueText -< xml
     question <- questionText -< xml
     returnA -< buildClue question answer
