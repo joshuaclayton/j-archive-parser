@@ -40,12 +40,14 @@ extractClue :: ArrowXml a => a XmlTree (Maybe Clue)
 extractClue = proc xml -> do
     answer <- maybeAnswer -< xml
     question <- maybeQuestion -< xml
-    value <- css ".clue_value" >>> allText -< xml
-    returnA -< question >>= \q -> answer >>= \a -> return $ buildClue q a value
+    value <- maybeValue -< xml
+    returnA -< question >>= \q -> answer >>= \a -> value >>= \v -> return $ buildClue q a v
   where
     clueText = css ".clue_text" >>> allText
+    valueText = css ".clue_value" >>> allText
     maybeQuestion = arrToMaybe ((/=) "") questionText
     maybeAnswer = arrToMaybe ((/=) "") clueText
+    maybeValue = arrToMaybe ((/=) "") valueText
     questionText = css "div" >>> retrieveAttribute "onmouseover" >>^ answerFromMouseOver
 
 arrToMaybe :: ArrowXml a => (b -> Bool) -> a XmlTree b -> a XmlTree (Maybe b)
