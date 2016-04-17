@@ -38,31 +38,29 @@ extractCategory = proc xml -> do
 
 extractClue :: ArrowXml a => a XmlTree (Maybe Clue)
 extractClue = proc xml -> do
-    answer <- maybeAnswer -< xml
-    question <- maybeQuestion -< xml
-    value <- maybeValue -< xml
+    answer <- extractAnswer -< xml
+    question <- extractQuestion -< xml
+    value <- extractValue -< xml
     returnA -< buildClue <$> question <*> answer <*> value
-  where
-    clueText = css ".clue_text" >>> allText
-    valueText = css ".clue_value" >>> allText
-    maybeQuestion = arrToMaybe ((/=) "") questionText
-    maybeAnswer = arrToMaybe ((/=) "") clueText
-    maybeValue = arrToMaybe ((/=) "") valueText
-    questionText = css "div" >>> retrieveAttribute "onmouseover" >>^ answerFromMouseOver
 
 arrToMaybe :: ArrowXml a => (b -> Bool) -> a XmlTree b -> a XmlTree (Maybe b)
 arrToMaybe f x =
   (x >>> isA f >>> arr Just) `orElse` (constA Nothing)
 
-answerFromMouseOver :: String -> String
-answerFromMouseOver mouseover =
-    last $ head $ matchAllSubgroups textInsideEm mouseover
+extractAnswer :: ArrowXml a => a XmlTree (Maybe String)
+extractAnswer =
+    arrToMaybe ((/=) "") $ css ".clue_text" >>> allText
+
+extractQuestion :: ArrowXml a => a XmlTree (Maybe String)
+extractQuestion =
+    arrToMaybe ((/=) "") $ css "div" >>> getAttrValue "onmouseover" >>^ answerFromMouseOver
   where
+    answerFromMouseOver mouseover = last $ head $ matchAllSubgroups textInsideEm mouseover
     textInsideEm = mkRegex "<em[^>]*>(.+)</em>"
 
-retrieveAttribute :: ArrowXml a => String -> a XmlTree String
-retrieveAttribute a =
-  hasAttr a >>> getAttrValue a
+extractValue :: ArrowXml a => a XmlTree (Maybe String)
+extractValue =
+    arrToMaybe ((/=) "") $ css ".clue_value" >>> allText
 
 allText :: ArrowXml a => a (NTree XNode) String
 allText =
