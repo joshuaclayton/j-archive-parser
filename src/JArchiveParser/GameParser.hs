@@ -55,7 +55,7 @@ extractQuestion =
 
 extractValue :: ArrowXml a => a XmlTree String
 extractValue =
-    css ".clue_value" >>> allText
+    (css ".clue_value" >>> allText) `orElse` (css ".clue_value_daily_double" >>> allText)
 
 maybeText :: ArrowXml a => a XmlTree String -> a XmlTree (Maybe String)
 maybeText = arrToMaybe ((/=) "")
