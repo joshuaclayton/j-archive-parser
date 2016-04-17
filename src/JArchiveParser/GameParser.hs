@@ -13,19 +13,32 @@ import JArchiveParser.Arrow.Util
 
 someFunc :: IO ()
 someFunc = do
-  let gameUrl i = "http://j-archive.com/showgame.php?game_id=" ++ show i
-  result <- extractClues $ gameUrl 173
+  result <- extractClues 173
   mapM_ (putStrLn . show) result
 
-extractClues :: String -> IO [Round]
-extractClues url = do
-  runX $ fromUrl url >>> css "#jeopardy_round" >>> extractRound
+extractClues :: Int -> IO [Game]
+extractClues gameId = do
+    runX $ fromUrl url >>> extractGame url gameId
+  where
+    url = gameUrl gameId
+    gameUrl i = "http://j-archive.com/showgame.php?game_id=" ++ show i
 
-extractRound :: ArrowXml a => a XmlTree Round
-extractRound = proc xml -> do
+extractGame :: ArrowXml a => String -> Int -> a XmlTree Game
+extractGame gameUrl gameId = proc xml -> do
+  rounds <- extractRounds -< xml
+  returnA -< buildGame gameId gameUrl rounds
+
+extractRounds :: ArrowXml a => a XmlTree [Round]
+extractRounds = proc xml -> do
+    round1 <- css "#jeopardy_round" >>> extractRound Jeopardy -< xml
+    round2 <- css "#double_jeopardy_round" >>> extractRound DoubleJeopardy -< xml
+    returnA -< [round1, round2]
+
+extractRound :: ArrowXml a => RoundType -> a XmlTree Round
+extractRound roundType = proc xml -> do
     clues <- listA tr -< xml
     categories <- listA extractCategory -< xml
-    returnA -< buildRound categories (concat clues)
+    returnA -< buildRound categories (concat clues) roundType
   where
     tr = css "tr" >>> extractClue'
     extractClue' = listA $ css ".clue" >>> extractClue
