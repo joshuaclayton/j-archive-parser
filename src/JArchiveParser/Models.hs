@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module JArchiveParser.Models
     ( Clue, Game, Round, buildClue, buildGame, buildRound
     , Category, buildCategory
@@ -8,7 +10,7 @@ data Clue = Clue
     { question :: String
     , answer :: String
     , value :: String
-    } deriving Show
+    }
 
 data Category = Category
     { name :: String
@@ -24,7 +26,7 @@ data Round = Round
     { categories :: [Category]
     , clues :: [Maybe Clue]
     , roundType :: RoundType
-    } deriving Show
+    }
 
 data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
 
@@ -39,3 +41,19 @@ buildRound = Round
 
 buildCategory :: String -> Category
 buildCategory = Category
+
+instance Show Clue where
+  show (Clue question answer value) = "* v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
+
+instance Show Round where
+  show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues
+
+instance {-# OVERLAPPING #-} Show [Category] where
+  show xs = "\nCategories (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> "* " ++ name c ++ "\n") xs)
+
+instance {-# OVERLAPPING #-} Show (Maybe Clue) where
+  show (Just c) = show c
+  show Nothing = "* Unanswered question"
+
+instance {-# OVERLAPPING #-} Show [(Maybe Clue)] where
+  show xs = "\nClues (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> show c ++ "\n\n") xs)
