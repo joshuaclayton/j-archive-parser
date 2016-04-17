@@ -6,11 +6,10 @@ module JArchiveParser.GameParser
 
 import Text.XML.HXT.Core
 import Text.XML.HXT.CSS
-import Data.Tree.NTree.TypeDefs
-import Data.Maybe
 import JArchiveParser.Request
 import JArchiveParser.Models
 import JArchiveParser.Regex
+import JArchiveParser.Arrow.Util
 
 someFunc :: IO ()
 someFunc = do
@@ -38,34 +37,25 @@ extractCategory = proc xml -> do
 
 extractClue :: ArrowXml a => a XmlTree (Maybe Clue)
 extractClue = proc xml -> do
-    answer <- extractAnswer -< xml
-    question <- extractQuestion -< xml
-    value <- extractValue -< xml
+    answer <- maybeText extractAnswer -< xml
+    question <- maybeText extractQuestion -< xml
+    value <- maybeText extractValue -< xml
     returnA -< buildClue <$> question <*> answer <*> value
 
-arrToMaybe :: ArrowXml a => (b -> Bool) -> a XmlTree b -> a XmlTree (Maybe b)
-arrToMaybe f x =
-  (x >>> isA f >>> arr Just) `orElse` (constA Nothing)
-
-extractAnswer :: ArrowXml a => a XmlTree (Maybe String)
+extractAnswer :: ArrowXml a => a XmlTree String
 extractAnswer =
-    arrToMaybe ((/=) "") $ css ".clue_text" >>> allText
+    css ".clue_text" >>> allText
 
-extractQuestion :: ArrowXml a => a XmlTree (Maybe String)
+extractQuestion :: ArrowXml a => a XmlTree String
 extractQuestion =
-    arrToMaybe ((/=) "") $ css "div" >>> getAttrValue "onmouseover" >>^ answerFromMouseOver
+    css "div" >>> getAttrValue "onmouseover" >>^ answerFromMouseOver
   where
     answerFromMouseOver mouseover = last $ head $ matchAllSubgroups textInsideEm mouseover
     textInsideEm = mkRegex "<em[^>]*>(.+)</em>"
 
-extractValue :: ArrowXml a => a XmlTree (Maybe String)
+extractValue :: ArrowXml a => a XmlTree String
 extractValue =
-    arrToMaybe ((/=) "") $ css ".clue_value" >>> allText
+    css ".clue_value" >>> allText
 
-allText :: ArrowXml a => a (NTree XNode) String
-allText =
-    allTextNodes >>^ extractTextFromNodes >>> arr concat
-  where
-    allTextNodes = listA $ deep isText
-    extractTextFromNodes = fmap f'
-    f' (NTree (XText v) _) = v
+maybeText :: ArrowXml a => a XmlTree String -> a XmlTree (Maybe String)
+maybeText = arrToMaybe ((/=) "")
