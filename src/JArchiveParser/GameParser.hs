@@ -26,7 +26,7 @@ extractClues gameId = do
 extractGame :: ArrowXml a => String -> GameId -> a XmlTree Game
 extractGame gameUrl gameId = proc xml -> do
   rounds <- extractRounds -< xml
-  returnA -< buildGame gameId gameUrl rounds
+  returnA -< Game gameId gameUrl rounds
 
 extractRounds :: ArrowXml a => a XmlTree [Round]
 extractRounds = proc xml -> do
@@ -38,7 +38,7 @@ extractRound :: ArrowXml a => RoundType -> a XmlTree Round
 extractRound roundType = proc xml -> do
     clues <- listA tr -< xml
     categories <- listA extractCategory -< xml
-    returnA -< buildRound categories (cluesMergedWithCategories clues categories) roundType
+    returnA -< Round categories (cluesMergedWithCategories clues categories) roundType
   where
     tr = css "tr" >>> extractClue'
     extractClue' = listA $ css ".clue" >>> extractClue
@@ -47,14 +47,14 @@ extractRound roundType = proc xml -> do
 extractCategory :: ArrowXml a => a XmlTree Category
 extractCategory = proc xml -> do
   name <- css ".category_name" >>> allText -< xml
-  returnA -< buildCategory name
+  returnA -< Category name
 
 extractClue :: ArrowXml a => a XmlTree (Maybe (Category -> Clue))
 extractClue = proc xml -> do
     answer <- maybeText extractAnswer -< xml
     question <- maybeText extractQuestion -< xml
     value <- maybeText extractValue -< xml
-    returnA -< buildClue <$> question <*> answer <*> value
+    returnA -< Clue <$> question <*> answer <*> value
 
 extractAnswer :: ArrowXml a => a XmlTree String
 extractAnswer =

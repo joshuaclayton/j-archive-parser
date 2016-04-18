@@ -1,8 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 module JArchiveParser.Models
-    ( Clue, Game, Round, buildClue, buildGame, buildRound
-    , Category, buildCategory
+    ( Clue(..), Game(..), Round(..)
+    , Category(..)
     , RoundType(..)
     , GameId(..)
     , SeasonId(..)
@@ -35,18 +35,6 @@ data Round = Round
     }
 
 data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
-
-buildClue :: String -> String -> String -> Category -> Clue
-buildClue = Clue
-
-buildGame :: GameId -> String -> [Round] -> Game
-buildGame = Game
-
-buildRound :: [Category] -> [Maybe Clue] -> RoundType -> Round
-buildRound = Round
-
-buildCategory :: String -> Category
-buildCategory = Category
 
 instance Show Clue where
   show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question

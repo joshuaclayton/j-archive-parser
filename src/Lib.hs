@@ -25,7 +25,7 @@ extractGame :: ArrowXml cat => cat XmlTree Game
 extractGame = proc xml -> do
     url <- getAttrValue "href" -< xml
     let gId = last $ head $ matchAllSubgroups gameIdMatch url
-    returnA -< buildGame (toGid gId) url []
+    returnA -< Game (toGid gId) url []
   where
     toGid t = GameId ((read t) :: Int)
     gameIdMatch = mkRegex "game_id=([0-9]+)"
