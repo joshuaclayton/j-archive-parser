@@ -9,6 +9,7 @@ import Text.XML.HXT.CSS
 import JArchiveParser.Request
 import JArchiveParser.Models
 import JArchiveParser.Regex
+import JArchiveParser.Arrow.Util
 import JArchiveParser.UrlGenerator (seasonUrl)
 
 someFunc :: IO ()
@@ -28,7 +29,3 @@ extractGame = proc xml -> do
   where
     toInt t = ((read t) :: Int)
     gameIdMatch = mkRegex "game_id=([0-9]+)"
-
-textAtSelector :: ArrowXml cat => String -> cat XmlTree String
-textAtSelector selector =
-  css selector >>> getChildren >>> getText

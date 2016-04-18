@@ -5,6 +5,7 @@ module JArchiveParser.Arrow.Util
 
 import Data.Tree.NTree.TypeDefs
 import Text.XML.HXT.Core
+import Text.XML.HXT.CSS
 
 arrToMaybe :: ArrowXml a => (b -> Bool) -> a XmlTree b -> a XmlTree (Maybe b)
 arrToMaybe p x =
@@ -20,3 +21,7 @@ allText =
     allTextNodes = listA $ deep isText
     extractTextFromNodes = fmap f'
     f' (NTree (XText v) _) = v
+
+textAtSelector :: ArrowXml cat => String -> cat XmlTree String
+textAtSelector selector =
+  css selector >>> getChildren >>> getText
