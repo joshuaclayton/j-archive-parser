@@ -4,7 +4,12 @@ module JArchiveParser.Models
     ( Clue, Game, Round, buildClue, buildGame, buildRound
     , Category, buildCategory
     , RoundType(..)
+    , GameId(..)
+    , SeasonId(..)
     ) where
+
+newtype GameId = GameId Int
+newtype SeasonId = SeasonId Int
 
 data Clue = Clue
     { question :: String
@@ -18,7 +23,7 @@ data Category = Category
     } deriving Show
 
 data Game = Game
-    { id :: Int
+    { id :: GameId
     , url :: String
     , rounds :: [Round]
     } deriving Show
@@ -34,7 +39,7 @@ data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
 buildClue :: String -> String -> String -> Category -> Clue
 buildClue = Clue
 
-buildGame :: Int -> String -> [Round] -> Game
+buildGame :: GameId -> String -> [Round] -> Game
 buildGame = Game
 
 buildRound :: [Category] -> [Maybe Clue] -> RoundType -> Round
@@ -45,6 +50,12 @@ buildCategory = Category
 
 instance Show Clue where
   show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
+
+instance Show GameId where
+  show (GameId gId) = show gId
+
+instance Show SeasonId where
+  show (SeasonId sId) = show sId
 
 instance Show Round where
   show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues

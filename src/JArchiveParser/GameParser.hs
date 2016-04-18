@@ -14,16 +14,16 @@ import JArchiveParser.UrlGenerator (gameUrl)
 
 someFunc :: IO ()
 someFunc = do
-  result <- extractClues 173
+  result <- extractClues $ GameId 173
   mapM_ (putStrLn . show) result
 
-extractClues :: Int -> IO [Game]
+extractClues :: GameId -> IO [Game]
 extractClues gameId = do
     runX $ fromUrl url >>> extractGame url gameId
   where
     url = gameUrl gameId
 
-extractGame :: ArrowXml a => String -> Int -> a XmlTree Game
+extractGame :: ArrowXml a => String -> GameId -> a XmlTree Game
 extractGame gameUrl gameId = proc xml -> do
   rounds <- extractRounds -< xml
   returnA -< buildGame gameId gameUrl rounds
