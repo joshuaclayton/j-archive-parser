@@ -10,6 +10,7 @@ data Clue = Clue
     { question :: String
     , answer :: String
     , value :: String
+    , category :: Category
     }
 
 data Category = Category
@@ -30,7 +31,7 @@ data Round = Round
 
 data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
 
-buildClue :: String -> String -> String -> Clue
+buildClue :: String -> String -> String -> Category -> Clue
 buildClue = Clue
 
 buildGame :: Int -> String -> [Round] -> Game
@@ -43,7 +44,7 @@ buildCategory :: String -> Category
 buildCategory = Category
 
 instance Show Clue where
-  show (Clue question answer value) = "* v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
+  show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
 
 instance Show Round where
   show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues

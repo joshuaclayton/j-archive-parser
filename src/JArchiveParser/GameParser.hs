@@ -38,17 +38,18 @@ extractRound :: ArrowXml a => RoundType -> a XmlTree Round
 extractRound roundType = proc xml -> do
     clues <- listA tr -< xml
     categories <- listA extractCategory -< xml
-    returnA -< buildRound categories (concat clues) roundType
+    returnA -< buildRound categories (cluesMergedWithCategories clues categories) roundType
   where
     tr = css "tr" >>> extractClue'
     extractClue' = listA $ css ".clue" >>> extractClue
+    cluesMergedWithCategories clues categories = zipWith (<*>) (concat clues) (cycle $ fmap Just categories)
 
 extractCategory :: ArrowXml a => a XmlTree Category
 extractCategory = proc xml -> do
   name <- css ".category_name" >>> allText -< xml
   returnA -< buildCategory name
 
-extractClue :: ArrowXml a => a XmlTree (Maybe Clue)
+extractClue :: ArrowXml a => a XmlTree (Maybe (Category -> Clue))
 extractClue = proc xml -> do
     answer <- maybeText extractAnswer -< xml
     question <- maybeText extractQuestion -< xml
