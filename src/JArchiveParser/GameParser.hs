@@ -10,6 +10,7 @@ import JArchiveParser.Request
 import JArchiveParser.Models
 import JArchiveParser.Regex
 import JArchiveParser.Arrow.Util
+import JArchiveParser.UrlGenerator (gameUrl)
 
 someFunc :: IO ()
 someFunc = do
@@ -21,7 +22,6 @@ extractClues gameId = do
     runX $ fromUrl url >>> extractGame url gameId
   where
     url = gameUrl gameId
-    gameUrl i = "http://j-archive.com/showgame.php?game_id=" ++ show i
 
 extractGame :: ArrowXml a => String -> Int -> a XmlTree Game
 extractGame gameUrl gameId = proc xml -> do

@@ -9,10 +9,10 @@ import Text.XML.HXT.CSS
 import JArchiveParser.Request
 import JArchiveParser.Models
 import JArchiveParser.Regex
+import JArchiveParser.UrlGenerator (seasonUrl)
 
 someFunc :: IO ()
 someFunc = do
-  let seasonUrl i = "http://j-archive.com/showseason.php?season=" ++ show i
   result <- extractGames $ seasonUrl 1
   mapM_ (putStrLn . show) result
 
