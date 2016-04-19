@@ -13,5 +13,5 @@ main = do
     mapM_ (putStrLn . show) games
     stopGlobalPool
   where
-    gamesToTake = Prelude.id
-    extractGame g = someFunc $ JArchiveParser.Models.id g
+    gamesToTake = id
+    extractGame g = someFunc $ gameId g

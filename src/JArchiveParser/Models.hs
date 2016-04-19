@@ -23,7 +23,7 @@ data Category = Category
     } deriving Show
 
 data Game = Game
-    { id :: GameId
+    { gameId :: GameId
     , url :: String
     , rounds :: [Round]
     } deriving Show
