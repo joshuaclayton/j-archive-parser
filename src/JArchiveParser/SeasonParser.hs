@@ -1,6 +1,6 @@
 {-# LANGUAGE Arrows #-}
 
-module Lib
+module JArchiveParser.SeasonParser
     ( someFunc
     ) where
 
