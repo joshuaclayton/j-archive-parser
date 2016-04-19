@@ -18,7 +18,7 @@ library
   exposed-modules:     Lib
                      , JArchiveParser.Request
                      , JArchiveParser.GameParser
-                     , JArchiveParser.Models
+                     , JArchiveParser.Model
                      , JArchiveParser.Regex
                      , JArchiveParser.Arrow.Util
                      , JArchiveParser.UrlGenerator

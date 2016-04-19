@@ -5,7 +5,7 @@ module JArchiveParser.UrlGenerator
 
 import Text.Printf
 import Network.HTTP
-import JArchiveParser.Models
+import JArchiveParser.Model
 
 gameUrl :: GameId -> String
 gameUrl gId =

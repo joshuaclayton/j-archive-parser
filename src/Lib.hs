@@ -7,7 +7,7 @@ module Lib
 import Text.XML.HXT.Core
 import Text.XML.HXT.CSS
 import JArchiveParser.Request
-import JArchiveParser.Models
+import JArchiveParser.Model
 import JArchiveParser.Regex
 import JArchiveParser.Arrow.Util
 import JArchiveParser.UrlGenerator (seasonUrl)

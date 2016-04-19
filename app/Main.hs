@@ -1,7 +1,7 @@
 module Main where
 
 import qualified Lib as S
-import JArchiveParser.Models
+import JArchiveParser.Model
 import JArchiveParser.GameParser
 import Control.Concurrent.ParallelIO
 

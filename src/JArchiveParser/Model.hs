@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module JArchiveParser.Models
+module JArchiveParser.Model
     ( Clue(..), Game(..), Round(..)
     , Category(..)
     , RoundType(..)
