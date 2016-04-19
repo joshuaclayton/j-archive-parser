@@ -12,10 +12,9 @@ import JArchiveParser.Regex
 import JArchiveParser.Arrow.Util
 import JArchiveParser.UrlGenerator (seasonUrl)
 
-someFunc :: IO ()
-someFunc = do
-  result <- extractGames $ seasonUrl $ SeasonId 1
-  mapM_ (putStrLn . show) result
+someFunc :: SeasonId -> IO [Game]
+someFunc sId =
+  extractGames $ seasonUrl sId
 
 extractGames :: String -> IO [Game]
 extractGames url = do
