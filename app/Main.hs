@@ -10,8 +10,8 @@ main = do
     gamesInSeason <- S.someFunc $ SeasonId 1
     mapM_ (putStrLn . show) gamesInSeason
     games <- parallel $ map extractGame $ gamesToTake gamesInSeason
-    mapM_ (putStrLn . show) games
     stopGlobalPool
+    mapM_ (putStrLn . show) games
   where
     gamesToTake = take 2
     extractGame g = someFunc $ gameId g
