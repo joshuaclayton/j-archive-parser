@@ -19,7 +19,7 @@ someFunc = do
 
 extractGames :: String -> IO [Game]
 extractGames url = do
-  runX $ fromUrl url >>> css "table td a" >>> extractGame
+  runX $ fromUrl url >>> css "table td:nth-of-type(1) a" >>> extractGame
 
 extractGame :: ArrowXml cat => cat XmlTree Game
 extractGame = proc xml -> do
