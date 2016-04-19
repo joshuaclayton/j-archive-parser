@@ -13,5 +13,5 @@ main = do
     mapM_ (putStrLn . show) games
     stopGlobalPool
   where
-    gamesToTake = id
+    gamesToTake = take 2
     extractGame g = someFunc $ gameId g
