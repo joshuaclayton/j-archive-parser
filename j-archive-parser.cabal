@@ -2,7 +2,7 @@ name:                j-archive-parser
 version:             0.1.0.0
 synopsis:            Parse j-archive.com
 description:         Please see README.md
-homepage:            https://github.com/githubuser/j-archive-parser#readme
+homepage:            https://github.com/joshuaclayton/j-archive-parser#readme
 license:             MIT
 license-file:        LICENSE
 author:              Josh Clayton
