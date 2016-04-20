@@ -24,4 +24,4 @@ allText =
 
 textAtSelector :: ArrowXml cat => String -> cat XmlTree String
 textAtSelector selector =
-  css selector >>> getChildren >>> getText
+    css selector >>> getChildren >>> getText

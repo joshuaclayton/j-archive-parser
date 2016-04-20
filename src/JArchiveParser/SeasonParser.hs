@@ -14,8 +14,8 @@ import JArchiveParser.UrlGenerator (seasonUrl)
 
 someFunc :: SeasonId -> IO Season
 someFunc sId = do
-  season <- extractSeasons sId
-  return $ head season
+    season <- extractSeasons sId
+    return $ head season
 
 extractSeasons :: SeasonId -> IO [Season]
 extractSeasons seasonId = do

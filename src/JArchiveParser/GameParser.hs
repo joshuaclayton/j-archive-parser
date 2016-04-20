@@ -14,8 +14,8 @@ import JArchiveParser.UrlGenerator (gameUrl)
 
 someFunc :: GameId -> IO Game
 someFunc gId = do
-  game <- extractClues gId
-  return $ head game
+    game <- extractClues gId
+    return $ head game
 
 extractClues :: GameId -> IO [Game]
 extractClues gameId = do
@@ -25,8 +25,8 @@ extractClues gameId = do
 
 extractGame :: ArrowXml a => String -> GameId -> a XmlTree Game
 extractGame gameUrl gameId = proc xml -> do
-  rounds <- extractRounds -< xml
-  returnA -< Game gameId gameUrl rounds
+    rounds <- extractRounds -< xml
+    returnA -< Game gameId gameUrl rounds
 
 extractRounds :: ArrowXml a => a XmlTree [Round]
 extractRounds = proc xml -> do
@@ -46,8 +46,8 @@ extractRound roundType = proc xml -> do
 
 extractCategory :: ArrowXml a => a XmlTree Category
 extractCategory = proc xml -> do
-  name <- css ".category_name" >>> allText -< xml
-  returnA -< Category name
+    name <- css ".category_name" >>> allText -< xml
+    returnA -< Category name
 
 extractClue :: ArrowXml a => a XmlTree (Maybe (Category -> Clue))
 extractClue = proc xml -> do

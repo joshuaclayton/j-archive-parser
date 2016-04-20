@@ -43,23 +43,23 @@ data Round = Round
 data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
 
 instance Show Clue where
-  show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
+    show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
 
 instance Show GameId where
-  show (GameId gId) = show gId
+    show (GameId gId) = show gId
 
 instance Show SeasonId where
-  show (SeasonId sId) = show sId
+    show (SeasonId sId) = show sId
 
 instance Show Round where
-  show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues
+    show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues
 
 instance {-# OVERLAPPING #-} Show [Category] where
-  show xs = "\nCategories (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> "* " ++ name c ++ "\n") xs)
+    show xs = "\nCategories (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> "* " ++ name c ++ "\n") xs)
 
 instance {-# OVERLAPPING #-} Show (Maybe Clue) where
-  show (Just c) = show c
-  show Nothing = "* Unanswered question"
+    show (Just c) = show c
+    show Nothing = "* Unanswered question"
 
 instance {-# OVERLAPPING #-} Show [(Maybe Clue)] where
-  show xs = "\nClues (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> show c ++ "\n\n") xs)
+    show xs = "\nClues (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> show c ++ "\n\n") xs)
