@@ -22,6 +22,7 @@ library
                      , JArchiveParser.Regex
                      , JArchiveParser.Arrow.Util
                      , JArchiveParser.UrlGenerator
+                     , JArchiveParser.Cache
   build-depends:       base >= 4.7 && < 5
                      , hxt-css
                      , hxt
@@ -29,6 +30,8 @@ library
                      , regex-tdfa
                      , HTTP
                      , parallel-io
+                     , cassava
+                     , bytestring
   default-language:    Haskell2010
   other-extensions:    Arrows
 
