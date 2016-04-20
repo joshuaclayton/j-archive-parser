@@ -1,11 +1,14 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 module JArchiveParser.Model
-    ( Clue(..), Game(..), Round(..), Season(..)
-    , Category(..)
-    , RoundType(..)
-    , GameId(..)
-    , SeasonId(..)
+    ( Clue (..)
+    , Game (..)
+    , Round (..)
+    , Season (..)
+    , Category (..)
+    , RoundType (..)
+    , GameId (..)
+    , SeasonId (..)
     ) where
 
 newtype GameId = GameId Int
