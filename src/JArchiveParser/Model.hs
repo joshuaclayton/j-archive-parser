@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 module JArchiveParser.Model
-    ( Clue(..), Game(..), Round(..)
+    ( Clue(..), Game(..), Round(..), Season(..)
     , Category(..)
     , RoundType(..)
     , GameId(..)
@@ -10,6 +10,12 @@ module JArchiveParser.Model
 
 newtype GameId = GameId Int
 newtype SeasonId = SeasonId Int
+
+data Season = Season
+    { seasonId :: SeasonId
+    , sUrl :: String
+    , games :: [Game]
+    } deriving Show
 
 data Clue = Clue
     { question :: String
@@ -24,7 +30,7 @@ data Category = Category
 
 data Game = Game
     { gameId :: GameId
-    , url :: String
+    , gUrl :: String
     , rounds :: [Round]
     } deriving Show
 

@@ -7,11 +7,12 @@ import Control.Concurrent.ParallelIO
 
 main :: IO ()
 main = do
-    gamesInSeason <- SP.someFunc $ SeasonId 1
+    season <- SP.someFunc $ SeasonId 1
+    let gamesInSeason = games season
     mapM_ (putStrLn . show) gamesInSeason
-    games <- parallel $ map extractGame $ gamesToTake gamesInSeason
+    games' <- parallel $ map extractGame $ gamesToTake gamesInSeason
     stopGlobalPool
-    mapM_ (putStrLn . show) games
+    mapM_ (putStrLn . show) games'
   where
     gamesToTake = take 2
     extractGame g = GP.someFunc $ gameId g

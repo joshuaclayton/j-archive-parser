@@ -12,13 +12,23 @@ import JArchiveParser.Regex
 import JArchiveParser.Arrow.Util
 import JArchiveParser.UrlGenerator (seasonUrl)
 
-someFunc :: SeasonId -> IO [Game]
-someFunc sId =
-  extractGames $ seasonUrl sId
+someFunc :: SeasonId -> IO Season
+someFunc sId = do
+  season <- extractSeasons sId
+  return $ head season
 
-extractGames :: String -> IO [Game]
-extractGames url = do
-  runX $ fromUrl url >>> css "table td:nth-of-type(1) a" >>> extractGame
+extractSeasons :: SeasonId -> IO [Season]
+extractSeasons seasonId = do
+    runX $ fromUrl url >>> css "table" >>> extractSeason url seasonId
+  where
+    url = seasonUrl seasonId
+
+extractSeason :: ArrowXml cat => String -> SeasonId -> cat XmlTree Season
+extractSeason url seasonId = proc xml -> do
+    games' <- listA extractGame' -< xml
+    returnA -< Season seasonId url games'
+  where
+    extractGame' = css "td:nth-of-type(1) a" >>> extractGame
 
 extractGame :: ArrowXml cat => cat XmlTree Game
 extractGame = proc xml -> do
