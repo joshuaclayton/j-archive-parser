@@ -9,10 +9,10 @@ main :: IO ()
 main = do
     season <- SP.someFunc $ SeasonId 1
     let gamesInSeason = games season
-    mapM_ (putStrLn . show) gamesInSeason
+    mapM_ print gamesInSeason
     games' <- parallel $ map extractGame $ gamesToTake gamesInSeason
     stopGlobalPool
-    mapM_ (putStrLn . show) games'
+    mapM_ print games'
   where
     gamesToTake = take 2
     extractGame g = GP.someFunc $ gameId g
