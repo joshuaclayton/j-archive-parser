@@ -58,7 +58,14 @@ instance ToNamedRecord FlattenedClue where
                     ]
 
 instance DefaultOrdered FlattenedClue where
-    headerOrder _ = header ["season id", "game id", "round", "question", "answer", "value", "category"]
+    headerOrder _ = header ["season id"
+                           , "game id"
+                           , "round"
+                           , "question"
+                           , "answer"
+                           , "value"
+                           , "category"
+                           ]
 
 instance ToField SeasonId where
     toField (SeasonId sId) = toField sId

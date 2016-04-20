@@ -11,6 +11,8 @@ module JArchiveParser.Model
     , SeasonId (..)
     ) where
 
+import qualified Data.List as L
+
 newtype GameId = GameId Int
 newtype SeasonId = SeasonId Int
 
@@ -46,7 +48,14 @@ data Round = Round
 data RoundType = Jeopardy | DoubleJeopardy | FinalJeopardy deriving (Show)
 
 instance Show Clue where
-    show (Clue question answer value category) = "* c: " ++ name category ++ "\n  v: " ++ value ++ "\n  a: " ++ answer ++ "\n  q: " ++ question
+    show (Clue question answer value category) =
+        concat $ L.intersperse "\n" lines
+      where
+        lines = [categoryLine, valueLine, answerLine, questionLine]
+        categoryLine = "* c:" ++ name category
+        valueLine    = "  v:" ++ value
+        answerLine   = "  a:" ++ answer
+        questionLine = "  a:" ++ question
 
 instance Show GameId where
     show (GameId gId) = show gId
@@ -55,14 +64,27 @@ instance Show SeasonId where
     show (SeasonId sId) = show sId
 
 instance Show Round where
-    show (Round categories clues roundType) = "\nRound: " ++ show roundType ++ "\n" ++ show categories ++ "\n" ++ show clues
+    show (Round categories clues roundType) =
+        "\nRound: " ++ (concat $ L.intersperse "\n" lines)
+      where
+        lines = [show roundType, show categories, show clues]
 
 instance {-# OVERLAPPING #-} Show [Category] where
-    show xs = "\nCategories (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> "* " ++ name c ++ "\n") xs)
+    show xs =
+        "\nCategories (" ++ categoryCount ++ "):\n\n" ++ categoryList
+      where
+        categoryCount = (show . length) xs
+        categoryList =
+            concat $ map (\c -> "* " ++ name c ++ "\n") xs
 
 instance {-# OVERLAPPING #-} Show (Maybe Clue) where
     show (Just c) = show c
     show Nothing = "* Unanswered question"
 
 instance {-# OVERLAPPING #-} Show [(Maybe Clue)] where
-    show xs = "\nClues (" ++ (show . length) xs ++ "):\n\n" ++ (concat $ map (\c -> show c ++ "\n\n") xs)
+    show xs =
+        "\nClues (" ++ cluesLength ++ "):\n\n" ++ cluesList
+      where
+        cluesLength = (show . length) xs
+        cluesList =
+            concat $ map (\c -> show c ++ "\n\n") xs

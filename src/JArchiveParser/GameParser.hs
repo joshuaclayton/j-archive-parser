@@ -30,19 +30,24 @@ extractGame gameUrl gameId = proc xml -> do
 
 extractRounds :: ArrowXml a => a XmlTree [Round]
 extractRounds = proc xml -> do
-    round1 <- css "#jeopardy_round" >>> extractRound Jeopardy -< xml
-    round2 <- css "#double_jeopardy_round" >>> extractRound DoubleJeopardy -< xml
+    round1 <- extractJeopardy "#jeopardy_round" Jeopardy -< xml
+    round2 <- extractJeopardy "#double_jeopardy_round" DoubleJeopardy -< xml
     returnA -< [round1, round2]
+  where
+    extractJeopardy selector roundType =
+      css selector >>> extractRound roundType
 
 extractRound :: ArrowXml a => RoundType -> a XmlTree Round
 extractRound roundType = proc xml -> do
     clues <- listA tr -< xml
     categories <- listA extractCategory -< xml
-    returnA -< Round categories (cluesMergedWithCategories clues categories) roundType
+    let finalClues = cluesMergedWithCategories clues categories
+    returnA -< Round categories finalClues roundType
   where
     tr = css "tr" >>> extractClue'
     extractClue' = listA $ css ".clue" >>> extractClue
-    cluesMergedWithCategories clues categories = zipWith (<*>) (concat clues) (cycle $ fmap Just categories)
+    cluesMergedWithCategories clues categories =
+        zipWith (<*>) (concat clues) (cycle $ fmap Just categories)
 
 extractCategory :: ArrowXml a => a XmlTree Category
 extractCategory = proc xml -> do
@@ -64,12 +69,14 @@ extractQuestion :: ArrowXml a => a XmlTree String
 extractQuestion =
     css "div" >>> getAttrValue "onmouseover" >>^ answerFromMouseOver
   where
-    answerFromMouseOver mouseover = last $ head $ matchAllSubgroups textInsideEm mouseover
+    answerFromMouseOver mo = last $ head $ matchAllSubgroups textInsideEm mo
     textInsideEm = mkRegex "<em[^>]*>(.+)</em>"
 
 extractValue :: ArrowXml a => a XmlTree String
 extractValue =
-    (css ".clue_value" >>> allText) `orElse` (css ".clue_value_daily_double" >>> allText)
+    (css ".clue_value" >>> allText)
+    `orElse`
+    (css ".clue_value_daily_double" >>> allText)
 
 maybeText :: ArrowXml a => a XmlTree String -> a XmlTree (Maybe String)
 maybeText = arrToMaybe ((/=) "")

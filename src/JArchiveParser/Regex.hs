@@ -18,5 +18,6 @@ matchAllSubgroups re =
   where
     f :: String -> Maybe ([String], String)
     f str = do
-        (_, _, rest, groups) <- matchM re str :: Maybe (String, String, String, [String])
+        (_, _, rest, groups) <-
+            matchM re str :: Maybe (String, String, String, [String])
         return (groups, rest)
