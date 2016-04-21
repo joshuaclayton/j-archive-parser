@@ -13,7 +13,7 @@ data Settings = Settings
 
 main :: IO ()
 main = do
-    mapM_ downloadSeason $ seasonsToDownload
+    mapM_ downloadSeason seasonsToDownload
     stopGlobalPool
 
 downloadSeason :: SeasonId -> IO ()
