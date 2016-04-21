@@ -9,38 +9,43 @@ import Control.Concurrent.ParallelIO
 data Settings = Settings
     { seasons :: Maybe [Int]
     , limit :: Maybe Int
+    , seasonProcessor :: (Season -> IO ())
     }
 
 main :: IO ()
 main = do
-    mapM_ downloadSeason seasonsToDownload
+    mapM_ (downloadSeason defaultSettings) $ seasonsToDownload defaultSettings
     stopGlobalPool
 
-downloadSeason :: SeasonId -> IO ()
-downloadSeason sId = do
+downloadSeason :: Settings -> SeasonId -> IO ()
+downloadSeason settings sId = do
     season <- SP.someFunc sId
-    let gamesInSeason = games season
-    games' <- parallel $ map extractGame $ gamesToTake gamesInSeason
-    let season' = season { games = concat games' }
-    cache season'
-    print season'
+    games' <- extractGames $ games season
+    (seasonProcessor settings) season { games = concat games' }
   where
+    extractGames gs =
+        parallel $ map extractGame $ (gamesToTake settings) gs
     extractGame g = do
         putStrLn $ "Processing game " ++ (show $ gameId g)
         GP.someFunc $ gameId g
 
-gamesToTake :: [a] -> [a]
-gamesToTake =
+gamesToTake :: Settings -> [a] -> [a]
+gamesToTake settings =
     case limit settings of
         Nothing -> id
         Just count -> take count
 
-seasonsToDownload :: [SeasonId]
-seasonsToDownload =
+seasonsToDownload :: Settings -> [SeasonId]
+seasonsToDownload settings =
     case seasons settings of
         Nothing -> fmap SeasonId [1..32]
         Just seasons' -> fmap SeasonId seasons'
 
-settings :: Settings
-settings =
-    Settings (Just [1]) Nothing
+processSeason :: Season -> IO ()
+processSeason s = do
+    cache s
+    print s
+
+defaultSettings :: Settings
+defaultSettings =
+    Settings (Just [1]) Nothing processSeason
