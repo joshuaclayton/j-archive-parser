@@ -6,16 +6,41 @@ import JArchiveParser.Model
 import JArchiveParser.Cache
 import Control.Concurrent.ParallelIO
 
+data Settings = Settings
+    { seasons :: Maybe [Int]
+    , limit :: Maybe Int
+    }
+
 main :: IO ()
 main = do
-    season <- SP.someFunc $ SeasonId 1
-    let gamesInSeason = games season
-    mapM_ print gamesInSeason
-    games' <- parallel $ map extractGame $ gamesToTake gamesInSeason
+    mapM_ downloadSeason $ seasonsToDownload
     stopGlobalPool
-    let season' = season { games = games' }
+
+downloadSeason :: SeasonId -> IO ()
+downloadSeason sId = do
+    season <- SP.someFunc sId
+    let gamesInSeason = games season
+    games' <- parallel $ map extractGame $ gamesToTake gamesInSeason
+    let season' = season { games = concat games' }
     cache season'
     print season'
   where
-    gamesToTake = take 2
-    extractGame g = GP.someFunc $ gameId g
+    extractGame g = do
+        putStrLn $ "Processing game " ++ (show $ gameId g)
+        GP.someFunc $ gameId g
+
+gamesToTake :: [a] -> [a]
+gamesToTake =
+    case limit settings of
+        Nothing -> id
+        Just count -> take count
+
+seasonsToDownload :: [SeasonId]
+seasonsToDownload =
+    case seasons settings of
+        Nothing -> fmap SeasonId [1..32]
+        Just seasons' -> fmap SeasonId seasons'
+
+settings :: Settings
+settings =
+    Settings (Just [1]) Nothing

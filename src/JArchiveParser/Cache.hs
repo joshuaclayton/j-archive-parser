@@ -27,21 +27,18 @@ cache season =
     seasonId' = seasonId season
 
 seasonToFlattenedClues :: Season -> [FlattenedClue]
-seasonToFlattenedClues season =
-    concat $ map (\game ->
-        concat $ map (\round ->
-            map (\clue ->
-              FlattenedClue
-                  (seasonId season)
-                  (gameId game)
-                  (roundType round)
-                  (question clue)
-                  (answer clue)
-                  (value clue)
-                  (category clue)
-            ) (catMaybes $ clues round)
-        ) (rounds game)
-    ) (games season)
+seasonToFlattenedClues season = do
+    game <- games season
+    round <- rounds game
+    clue <- catMaybes $ clues round
+    return $ FlattenedClue
+        (seasonId season)
+        (gameId game)
+        (roundType round)
+        (question clue)
+        (answer clue)
+        (value clue)
+        (category clue)
 
 writeToCache :: String -> [FlattenedClue] -> IO ()
 writeToCache cacheFile = BS.writeFile cacheFile . encodeDefaultOrderedByName

@@ -12,13 +12,8 @@ import JArchiveParser.Regex
 import JArchiveParser.Arrow.Util
 import JArchiveParser.UrlGenerator (gameUrl)
 
-someFunc :: GameId -> IO Game
-someFunc gId = do
-    game <- extractClues gId
-    return $ head game
-
-extractClues :: GameId -> IO [Game]
-extractClues gameId = do
+someFunc :: GameId -> IO [Game]
+someFunc gameId = do
     runX $ fromUrl url >>> extractGame url gameId
   where
     url = gameUrl gameId
