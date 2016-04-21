@@ -48,20 +48,20 @@ instance ToNamedRecord FlattenedClue where
         namedRecord [ "season id" .= fcSId
                     , "game id" .= fcGId
                     , "round" .= fcRoundType
-                    , "question" .= fcQuestion
-                    , "answer" .= fcAnswer
-                    , "value" .= fcValue
                     , "category" .= name fcCategory
+                    , "value" .= fcValue
+                    , "answer" .= fcAnswer
+                    , "question" .= fcQuestion
                     ]
 
 instance DefaultOrdered FlattenedClue where
     headerOrder _ = header ["season id"
                            , "game id"
                            , "round"
-                           , "question"
-                           , "answer"
-                           , "value"
                            , "category"
+                           , "value"
+                           , "answer"
+                           , "question"
                            ]
 
 instance ToField SeasonId where
